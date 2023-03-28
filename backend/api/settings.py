@@ -111,17 +111,6 @@ DATABASES = {
         'OPTIONS': {
             'options': '-c search_path={}'.format(env('DB_SCHEMA'))
         }
-    },
-    'chirpstack': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env('CHIRPSTACK_DB_NAME'),
-        'USER': env('CHIRPSTACK_DB_USER'),
-        'PASSWORD': env('CHIRPSTACK_DB_PASSWORD'),
-        'HOST': env('CHIRPSTACK_DB_HOST'),
-        'PORT': env('CHIRPSTACK_DB_PORT'),
-        'OPTIONS': {
-            'options': '-c search_path={}'.format(env('CHIRPSTACK_DB_SCHEMA'))
-        }
     }
 }
 
