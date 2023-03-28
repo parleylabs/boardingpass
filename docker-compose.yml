@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:13-alpine
+    container_name: billing-db
+    environment:
+      - POSTGRES_DB=boardingpass
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - proxy_bind_port=5432
+      - proxy_port=5432
+      - proxy_mode=tcp
+      - proxy_host=127.0.0.1
+    ports:
+      - 5432:5432
+    labels:
+      backend: "True"
+    networks:
+      - boardingpass
+
+  api:
+    build: ./backend
+    container_name: billing-api
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/backend
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - proxy_bind_port=8000
+      - proxy_port=433
+      - proxy_mode=http
+      - proxy_host=127.0.0.1
+    networks:
+      - boardingpass
+
+  web:
+    build: ./frontend
+    container_name: billing-ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/frontend
+    networks:
+      - boardingpass
+
+networks:
+  boardingpass:
+    name: boardingpass
