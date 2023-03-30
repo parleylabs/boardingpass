@@ -13,7 +13,10 @@ class UserSerializer(serializers.ModelSerializer):
 class RegistrationSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """
-        Check that the start is before the stop.
+        Validate permissions on superuser and staff
+        1. superuser can create other super users and staff in any organizations
+        2. staff can create other staff and general user in only their organization
+        3. general users cannot create users
         """
         user = self.context.get("request").user
         if data['is_superuser'] and not can_create_superuser(user):
