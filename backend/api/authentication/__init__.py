@@ -1,1 +1,1 @@
-from api.authentication.auth_backend import *
+from api.authentication.permissions import *

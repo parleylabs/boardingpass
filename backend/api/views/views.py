@@ -2,8 +2,9 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from api.serializers.user_serializers import UserSerializer
+from api.serializers.user_serializers import UserSerializer, RegistrationSerializer
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
@@ -13,16 +14,21 @@ class UserList(APIView):
     """
 
     def get(self, request, format=None):
-        users = User.objects.all()
+        if request.user.is_superuser:
+            users = User.objects.all()
+        else:
+            users = User.objects.filter(organization=request.user.organization)
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = UserSerializer(data=request.data)
+        serializer = RegistrationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class UserDetail(APIView):
     """
