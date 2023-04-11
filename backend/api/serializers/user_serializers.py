@@ -1,13 +1,16 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from api.authentication.permissions import can_create_user_in_org, can_create_superuser
+from api.serializers.organization_serializer import OrganizationSerializer
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    organizations = OrganizationSerializer(many=True)
+
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'organization', 'is_staff', 'is_superuser']
+        fields = ['first_name', 'last_name', 'email', 'username', 'organizations', 'is_staff', 'is_superuser']
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

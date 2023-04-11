@@ -17,4 +17,4 @@ class DeviceKey(models.Model):
         choices=STATUS_CHOICES,
         default=UNCLAIMED,
     )
-    owner = models.ForeignKey('api.User', models.DO_NOTHING, blank=True, null=True)
+    organization = models.ForeignKey('api.Organization', models.DO_NOTHING, blank=True, null=True)
