@@ -1,9 +1,9 @@
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, serializers
 from api.serializers.user_serializers import UserSerializer, RegistrationSerializer
-from api.serializers.device_key_serializer import DeviceKeySerializer
+from api.serializers.device_key_serializer import DeviceKeySerializer, DeviceKeyTransferSerializer
 from api.serializers.organization_serializer import OrganizationSerializer
 from django.contrib.auth import get_user_model
 from api.models.device_key import DeviceKey
@@ -95,6 +95,42 @@ class DeviceKeyDetail(APIView):
         device_key = DeviceKey.objects.get(pk=pk)
         device_key.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class DeviceKeyTransfer(APIView):
+    """
+    Transfer device key from one organization to another
+    """
+    serializer_class = DeviceKeyTransferSerializer
+
+    def post(self, request, format=None):
+        """
+        org_id -- organization to transfer to
+        dev_eui -- dev_eui to trensfer
+        """
+        serializer = DeviceKeyTransferSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            org_id = serializer.data['org_id']
+            dev_eui = serializer.data['dev_eui']
+            try:
+                device_key = DeviceKey.objects.get(dev_eui=dev_eui)
+            except DeviceKey.DoesNotExist:
+                raise serializers.ValidationError("Device key does not exist!")
+
+            try:
+                org = Organization.objects.get(pk= org_id)
+            except Organization.DoesNotExist:
+                raise serializers.ValidationError("Organzation does not exist!")
+
+            if request.user.organizations.filter(pk=device_key.organization.pk).exists():
+                device_key.organization = org
+                device_key.save()
+                serializer = DeviceKeySerializer(device_key)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                raise serializers.ValidationError("User is not allowed to transfer this key!")
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OrganizationList(APIView):

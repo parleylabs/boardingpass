@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-from api.views.views import UserList, UserDetail, DeviceKeyList, DeviceKeyDetail, OrganizationList, OrganizationDetail
+from api.views.views import UserList, UserDetail, DeviceKeyList, DeviceKeyDetail, OrganizationList, OrganizationDetail, DeviceKeyTransfer
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -39,6 +39,7 @@ urlpatterns = [
     path('users/<int:pk>', UserDetail.as_view(), name='user-detail'),
     path('device-key/', DeviceKeyList.as_view(), name='device-key-list'),
     path('device-key/<int:pk>', DeviceKeyDetail.as_view(), name='device-key-detail'),
+    path('device-key/transfer/', DeviceKeyTransfer.as_view(), name='device-key-transfer'),
     path('organization/', OrganizationList.as_view(), name='organization-list'),
     path('organization/<int:pk>', OrganizationDetail.as_view(), name='organization-detail'),
     path('rest-auth/', include('rest_auth.urls')),
