@@ -10,4 +10,4 @@ class DeviceKeySerializer(serializers.ModelSerializer):
 
 class DeviceKeyTransferSerializer(serializers.Serializer):
     org_id = serializers.IntegerField()
-    dev_eui = serializers.CharField(max_length=75)
+    dev_euis = serializers.ListField(child=serializers.CharField(max_length=75))

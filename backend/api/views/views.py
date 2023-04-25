@@ -106,29 +106,38 @@ class DeviceKeyTransfer(APIView):
     def post(self, request, format=None):
         """
         org_id -- organization to transfer to
-        dev_eui -- dev_eui to trensfer
+        dev_euis -- array of dev_eui to trensfer
         """
         serializer = DeviceKeyTransferSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             org_id = serializer.data['org_id']
-            dev_eui = serializer.data['dev_eui']
-            try:
-                device_key = DeviceKey.objects.get(dev_eui=dev_eui)
-            except DeviceKey.DoesNotExist:
-                raise serializers.ValidationError("Device key does not exist!")
+            dev_euis = serializer.data['dev_euis']
 
-            try:
-                org = Organization.objects.get(pk= org_id)
-            except Organization.DoesNotExist:
-                raise serializers.ValidationError("Organzation does not exist!")
+            device_keys = DeviceKey.objects.filter(dev_eui__in=dev_euis)
 
-            if request.user.organizations.filter(pk=device_key.organization.pk).exists():
-                device_key.organization = org
-                device_key.save()
-                serializer = DeviceKeySerializer(device_key)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                raise serializers.ValidationError("User is not allowed to transfer this key!")
+            for dev_eui in dev_euis:
+                try:
+                    device_key = DeviceKey.objects.get(dev_eui=dev_eui)
+                except DeviceKey.DoesNotExist:
+                    raise serializers.ValidationError("Device key not found: {}".format(dev_eui))
+
+                try:
+                    org = Organization.objects.get(pk=org_id)
+                except Organization.DoesNotExist:
+                    raise serializers.ValidationError("Organzation does not exist: {}".format(org_id))
+
+                if request.user.organizations.filter(pk=device_key.organization.pk).exists():
+                    device_key.organization = org
+                    device_key.save()
+
+                else:
+                    raise serializers.ValidationError("User is not allowed to transfer this key: {}".format(device_key.dev_eui))
+
+            if device_keys.count() != len(dev_euis):
+                raise serializers.ValidationError("One of the device keys could not be found!")
+
+            serializer = DeviceKeySerializer(device_keys, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
