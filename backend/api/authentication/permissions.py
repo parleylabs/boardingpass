@@ -11,3 +11,7 @@ def can_create_user_in_org(user, organization):
         return True
 
     return False
+
+
+def can_view_all_users(user):
+    return user.is_superuser

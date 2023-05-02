@@ -2,12 +2,13 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, serializers
-from api.serializers.user_serializers import UserSerializer, RegistrationSerializer
+from api.serializers.user_serializers import UserSerializer, RegistrationSerializer, UserEditSerializer
 from api.serializers.device_key_serializer import DeviceKeySerializer, DeviceKeyTransferSerializer
 from api.serializers.organization_serializer import OrganizationSerializer
 from django.contrib.auth import get_user_model
 from api.models.device_key import DeviceKey
 from api.models.organization import Organization
+from rest_framework.mixins import UpdateModelMixin
 
 User = get_user_model()
 
@@ -18,8 +19,9 @@ class UserList(APIView):
     """
 
     def get(self, request, format=None):
+        if not request.user.is_superuser:
+            raise serializers.ValidationError("Only superuser can view all user list details")
         users = User.objects.all()
-
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
@@ -37,20 +39,20 @@ class UserDetail(APIView):
     """
 
     def get(self, request, pk, format=None):
-        user = User.objects.get(email=pk)
+        user = User.objects.get(pk=pk)
         serializer = UserSerializer(user, many=False)
         return Response(serializer.data)
 
-    def put(self, request, pk):
-        user = User.objects.get(email=pk)
-        serializer = UserSerializer(user, many=False)
+    def put(self, request, pk, format=None):
+        user = User.objects.get(pk=pk)
+        serializer = UserEditSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        user = User.objects.get(email=pk)
+        user = User.objects.get(pk=pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -126,7 +128,7 @@ class DeviceKeyTransfer(APIView):
                 except Organization.DoesNotExist:
                     raise serializers.ValidationError("Organzation does not exist: {}".format(org_id))
 
-                if request.user.organizations.filter(pk=device_key.organization.pk).exists():
+                if request.user.is_superuser or request.user.organizations.filter(pk=device_key.organization.pk).exists() :
                     device_key.organization = org
                     device_key.save()
 
@@ -148,7 +150,10 @@ class OrganizationList(APIView):
     """
 
     def get(self, request, format=None):
-        organization = Organization.objects.all()
+        if request.user.is_superuser:
+            organization = Organization.objects.all()
+        else:
+            organization = request.user.organizations
         serializer = OrganizationSerializer(organization, many=True)
         return Response(serializer.data)
 
