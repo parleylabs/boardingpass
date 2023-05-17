@@ -40,8 +40,9 @@ class ApiService {
     buildHeaders(token = false) {
         let headers = new Headers();
         headers.append('Content-type', 'application/json');
+        console.log(token);
         if (token) {
-            headers.append('Authorization', `Token ${token}`);
+            headers.append('Authorization',  `Basic ${token}`);
         }
 
         return headers;
@@ -49,7 +50,7 @@ class ApiService {
 
     /**
      * Throw common error on not successful status
-     * @param {object} response 
+     * @param {object} response
      * @param {bool} auth - check for unauth error or not
      */
     handleCommonError(response, auth = false) {
@@ -61,7 +62,7 @@ class ApiService {
             throw new Error(response.status)
         }
         return;
-    }   
+    }
 
     async register(params) { //registration
         const reg = await this.apiCall(api.sign_up, 'POST', false, params);
@@ -83,6 +84,11 @@ class ApiService {
         const res = await this.apiCall(api.verify_token, 'POST', false, { token });
         this.handleCommonError(res);
         return res.status;
+    }
+
+    async transfer_keys(params) { //device-key
+        const res = await this.apiCall(api.devicekey + 'transfer/', 'POST', StorageService.getToken(), params );
+        return res.body;
     }
 
     async current_user(token = false) { //load current user profile
