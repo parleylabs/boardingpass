@@ -73,6 +73,7 @@ DB_PORT=
 FIELD_ENCRYPTION_KEY=
 ```
 Note: You may need to spin up an RDS instance or point to remote database
+
 7. Run ```pip install -r requirements.txt```
 8. Run ```manage.py collectstatic```
 9. Run ```gunicorn --workers 3 --bind 0.0.0.0:8000 api.wsgi:application```
