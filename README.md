@@ -12,6 +12,17 @@ Docker: https://www.docker.com/
 - Django
 - PostgreSQL
 
+## Entities
+ 
+- User - a person in the system who can manage keys within an organization
+- Organization - Many to many relationship with users. A user can belong to many organizations, and an organization can have many users. Organization is the entity that owns device keys.
+- Device Key - a key consisting of three parts dev_eui, app_eui, and app_key (app_key is encrypted at rest in database)
+
+## User Roles
+
+- General User - Has view access to keys in an organization
+- Organization Staff - Can view & transfer keys within an organization
+- Super User - Can view and manage all keys within all organizations
 
 ## Getting Started
 
