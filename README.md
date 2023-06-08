@@ -14,7 +14,7 @@ Docker: https://www.docker.com/
 
 ## Entities
  
-- User - a person in the system who can manage keys within an organization
+- User - a person in the system who can view or manage keys within an organization depending on their role
 - Organization - Many to many relationship with users. A user can belong to many organizations, and an organization can have many users. Organization is the entity that owns device keys.
 - Device Key - a key consisting of three parts dev_eui, app_eui, and app_key (app_key is encrypted at rest in database)
 
