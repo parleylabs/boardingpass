@@ -54,7 +54,10 @@ You can either point to the container credentials in docker-compose.yml or a rem
 
 8. Create a user with username and password
 
-9. Go to `http://127.0.0.1:3000/` and sign in with your credentials
+9. Review Swagger Documentation
+`http://127.0.0.1:8000/swagger/`
+
+10. Go to `http://127.0.0.1:3000/` and sign in with your credentials
 
 ## AWS Set Up
 
