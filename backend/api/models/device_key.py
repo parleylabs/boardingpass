@@ -1,4 +1,5 @@
 from django.db import models
+from encrypted_model_fields.fields import EncryptedCharField
 
 
 class DeviceKey(models.Model):
@@ -11,7 +12,7 @@ class DeviceKey(models.Model):
     device_key_id = models.AutoField(primary_key=True)
     dev_eui = models.CharField(max_length=75, unique=True)
     app_eui = models.CharField(max_length=75)
-    app_key = models.CharField(max_length=75)
+    app_key = EncryptedCharField(max_length=100)
     claimed_status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,

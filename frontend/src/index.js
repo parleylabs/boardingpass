@@ -9,6 +9,7 @@ import LoginForm from './components/LoginForm'
 import Dashboard from './components/Dashboard'
 import routes from './routing/routes'
 import authStore from './stores/AuthStore'
+import 'semantic-ui-css/semantic.min.css'
 
 const stores = {
     authStore,

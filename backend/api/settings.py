@@ -35,7 +35,7 @@ SECRET_KEY = 'django-insecure-b=g#((i^8spxtia$=t0ehw8%grgmq6+k19qhwh4_^xmx^n_uk$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '54.151.77.195']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '54.151.77.195', '*']
 
 
 # Application definition
@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'corsheaders',
     'rest_auth',
+    'encrypted_model_fields',
 ]
 
 MIDDLEWARE = [
@@ -68,15 +69,24 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+# CORS Config
+# CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOW_CREDENTIALS = False
+
+
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ]
+
 CORS_ALLOW_HEADERS = [
     'x-api-key',
     'content-type',
+    'Access-Control-Allow-Origin',
+    'Authorization',
+    'Access-Control-Allow-Headers',
 ]
 
 ROOT_URLCONF = 'api.urls'
@@ -162,3 +172,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/admin/login/'
+
+FIELD_ENCRYPTION_KEY = env('FIELD_ENCRYPTION_KEY')
