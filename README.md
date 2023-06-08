@@ -8,6 +8,7 @@ Docker: https://www.docker.com/
 
 ## Technology Stack
  
+- React
 - Python
 - Django
 - PostgreSQL
