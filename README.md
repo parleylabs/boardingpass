@@ -6,10 +6,6 @@ Boarding Pass
 Make sure you have docker installed and running
 Docker: https://www.docker.com/
 
-## Getting Started
-
-In the project directory, you can run:
-
 ## Local Set Up
 
 1. Create environment variable config file
@@ -74,8 +70,9 @@ FIELD_ENCRYPTION_KEY=
 ```
 Note: You may need to spin up an RDS instance or point to remote database
 
-8. Run ```pip install -r requirements.txt```
-9. Run ```manage.py collectstatic```
-10. Run ```gunicorn --workers 3 --bind 0.0.0.0:8000 api.wsgi:application```
-11. Update AWS Security group to allow anywhere access to port 8000
-12. View site at http://<ip_address>:8000/swagger/
+7. Run ```pip install -r requirements.txt```
+8. Run ```manage.py collectstatic```
+9. Run ```gunicorn --workers 3 --bind 0.0.0.0:8000 api.wsgi:application```
+10. Update AWS Security group to allow anywhere access to port 8000
+11. View site at http://<ip_address>:8000/swagger/
+

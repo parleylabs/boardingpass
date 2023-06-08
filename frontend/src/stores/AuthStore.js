@@ -2,6 +2,7 @@ import { observable, runInAction } from 'mobx'
 import ApiService from '../services/ApiService'
 import StorageService from '../services/StorageService'
 import history from '../services/history'
+import { Buffer } from 'buffer';
 
 class AuthStore {
     loginSession = observable({
@@ -13,13 +14,15 @@ class AuthStore {
         login: async (params) => {
             try {
                 const res = await ApiService.login(params)
-                StorageService.setToken(res.key)
+                const base64encodedData = Buffer.from(`${params.username}:${params.password}`).toString('base64');
+                StorageService.setToken(base64encodedData)
                 runInAction(() => {
                     this.loginSession.isAuthenticated = true
                     this.loginSession.isFailure = false
                     this.loginSession.isLoading = false
                 })
             } catch (e) {
+                console.log(e);
                 runInAction(() => {
                     this.loginSession.isAuthenticated = false
                     this.loginSession.isFailure = true

@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
+import { Container } from 'semantic-ui-react'
 
 class App extends Component {
 
     render() {
         return (
           <main>
-                {this.props.children}
+                <Container>
+                    {this.props.children}
+                </Container>
            </main>
         );
     }
