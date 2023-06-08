@@ -1,10 +1,21 @@
-# boardingpass
+# Boarding Pass
 Boarding Pass
 
 ## Dependencies
 
 Make sure you have docker installed and running
 Docker: https://www.docker.com/
+
+## Technology Stack
+ 
+- Python
+- Django
+- PostgreSQL
+
+
+## Getting Started
+
+In the project directory, you can run:
 
 ## Local Set Up
 
